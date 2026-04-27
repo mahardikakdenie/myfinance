@@ -1,98 +1,245 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { TransactionItem } from '@/components/ui/transaction-item';
+import { Colors } from '@/constants/theme';
+import { useFinance } from '@/context/FinanceContext';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+	const { transactions, totalBalance, totalIncome, totalExpenses } =
+		useFinance();
+	const colorScheme = useColorScheme();
+	const theme = Colors[colorScheme ?? 'light'];
+	const router = useRouter();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+	return (
+		<SafeAreaView
+			style={[styles.container, { backgroundColor: theme.background }]}>
+			<ScrollView contentContainerStyle={styles.scrollContent}>
+				<View style={styles.header}>
+					<View>
+						<ThemedText style={styles.greeting}>
+							Hello, User
+						</ThemedText>
+						<ThemedText style={styles.date}>
+							{new Date().toLocaleDateString(undefined, {
+								weekday: 'long',
+								day: 'numeric',
+								month: 'long',
+							})}
+						</ThemedText>
+					</View>
+					<Pressable
+						style={[
+							styles.profileButton,
+							{ backgroundColor: theme.surface },
+						]}>
+						<IconSymbol name='User' size={24} color={theme.tint} />
+					</Pressable>
+				</View>
+
+				<View
+					style={[
+						styles.balanceCard,
+						{ backgroundColor: theme.tint },
+					]}>
+					<ThemedText style={styles.balanceLabel}>
+						Total Saldo
+					</ThemedText>
+					<ThemedText style={styles.balanceAmount}>
+						Rp {totalBalance.toLocaleString('id-ID')}
+					</ThemedText>
+					<View style={styles.statsRow}>
+						<View style={styles.statItem}>
+							<View style={styles.statIconContainer}>
+								<IconSymbol
+									name='ArrowDownLeft'
+									size={16}
+									color='#fff'
+								/>
+							</View>
+							<View>
+								<ThemedText style={styles.statLabel}>
+									Pemasukan
+								</ThemedText>
+								<ThemedText style={styles.statAmount}>
+									Rp {totalIncome.toLocaleString('id-ID')}
+								</ThemedText>
+							</View>
+						</View>
+						<View style={styles.statItem}>
+							<View
+								style={[
+									styles.statIconContainer,
+									{
+										backgroundColor:
+											'rgba(255,255,255,0.2)',
+									},
+								]}>
+								<IconSymbol
+									name='ArrowUpRight'
+									size={16}
+									color='#fff'
+								/>
+							</View>
+							<View>
+								<ThemedText style={styles.statLabel}>
+									Pengeluaran
+								</ThemedText>
+								<ThemedText style={styles.statAmount}>
+									Rp {totalExpenses.toLocaleString('id-ID')}
+								</ThemedText>
+							</View>
+						</View>
+					</View>
+				</View>
+
+				<View style={styles.sectionHeader}>
+					<ThemedText style={styles.sectionTitle}>
+						Transaksi Terakhir
+					</ThemedText>
+					<Pressable>
+						<ThemedText style={{ color: theme.tint }}>
+							Lihat Semua
+						</ThemedText>
+					</Pressable>
+				</View>
+
+				<View style={styles.transactionList}>
+					{transactions.length > 0 ? (
+						transactions
+							.slice(0, 5)
+							.map((t) => (
+								<TransactionItem key={t.id} transaction={t} />
+							))
+					) : (
+						<ThemedText style={styles.emptyText}>
+							No transactions yet.
+						</ThemedText>
+					)}
+				</View>
+			</ScrollView>
+
+			<Pressable
+				style={[styles.fab, { backgroundColor: theme.tint }]}
+				onPress={() => router.push('/add-transaction')}>
+				<IconSymbol name='Plus' size={32} color='#fff' />
+			</Pressable>
+		</SafeAreaView>
+	);
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+	container: {
+		flex: 1,
+	},
+	scrollContent: {
+		padding: 20,
+		paddingBottom: 100,
+	},
+	header: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginBottom: 24,
+	},
+	greeting: {
+		fontSize: 16,
+		opacity: 0.6,
+	},
+	date: {
+		fontSize: 20,
+		fontWeight: '700',
+	},
+	profileButton: {
+		width: 48,
+		height: 48,
+		borderRadius: 24,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	balanceCard: {
+		padding: 24,
+		borderRadius: 24,
+		marginBottom: 32,
+		elevation: 8,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.1,
+		shadowRadius: 12,
+	},
+	balanceLabel: {
+		color: 'rgba(255,255,255,0.8)',
+		fontSize: 16,
+		marginBottom: 8,
+	},
+	balanceAmount: {
+		color: '#fff',
+		fontSize: 36,
+		fontWeight: '800',
+		marginBottom: 24,
+	},
+	statsRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	statItem: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 12,
+	},
+	statIconContainer: {
+		width: 32,
+		height: 32,
+		borderRadius: 16,
+		backgroundColor: 'rgba(255,255,255,0.3)',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	statLabel: {
+		color: 'rgba(255,255,255,0.8)',
+		fontSize: 12,
+	},
+	statAmount: {
+		color: '#fff',
+		fontSize: 16,
+		fontWeight: '700',
+	},
+	sectionHeader: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginBottom: 16,
+	},
+	sectionTitle: {
+		fontSize: 18,
+		fontWeight: '700',
+	},
+	transactionList: {
+		gap: 4,
+	},
+	emptyText: {
+		textAlign: 'center',
+		opacity: 0.5,
+		marginTop: 20,
+	},
+	fab: {
+		position: 'absolute',
+		bottom: 24,
+		right: 24,
+		width: 64,
+		height: 64,
+		borderRadius: 32,
+		alignItems: 'center',
+		justifyContent: 'center',
+		elevation: 5,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+	},
 });
