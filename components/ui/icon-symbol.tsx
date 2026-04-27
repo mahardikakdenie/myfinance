@@ -26,7 +26,10 @@ import {
   FileText,
   ChevronRight,
   CircleHelp,
-  Globe
+  Globe,
+  Database,
+  Target,
+  Wallet
 } from 'lucide-react-native';
 
 import { OpaqueColorValue, type StyleProp, type ViewStyle } from 'react-native';
@@ -58,7 +61,10 @@ const ICONS: Record<string, any> = {
   FileText,
   ChevronRight,
   CircleHelp,
-  Globe
+  Globe,
+  Database,
+  Target,
+  Wallet
 };
 
 /**

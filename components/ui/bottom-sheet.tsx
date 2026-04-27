@@ -7,7 +7,7 @@ import Animated, {
   withTiming, 
   runOnJS,
   interpolate,
-  Extrapolate
+  Extrapolation
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Colors } from '@/constants/theme';
@@ -26,32 +26,30 @@ export function BottomSheet({ visible, onClose, children, height = SCREEN_HEIGHT
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   
-  const translateY = useSharedValue(SCREEN_HEIGHT);
-  const active = useSharedValue(false);
+  const translateY = useSharedValue(height); // Start hidden (at the bottom)
 
   const scrollTo = useCallback((destination: number) => {
     'worklet';
-    active.value = destination !== SCREEN_HEIGHT;
     translateY.value = withSpring(destination, { damping: 20, stiffness: 100 });
   }, []);
 
   useEffect(() => {
     if (visible) {
-      scrollTo(SCREEN_HEIGHT - height);
+      scrollTo(0); // Show: move to 0 offset
     } else {
-      scrollTo(SCREEN_HEIGHT);
+      scrollTo(height); // Hide: move back to height offset
     }
   }, [visible, height, scrollTo]);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
-      translateY.value = Math.max(SCREEN_HEIGHT - height + event.translationY, SCREEN_HEIGHT - height - 20);
+      translateY.value = Math.max(event.translationY, -20);
     })
     .onEnd((event) => {
       if (event.translationY > 100 || event.velocityY > 500) {
         runOnJS(onClose)();
       } else {
-        scrollTo(SCREEN_HEIGHT - height);
+        scrollTo(0);
       }
     });
 
@@ -65,15 +63,26 @@ export function BottomSheet({ visible, onClose, children, height = SCREEN_HEIGHT
     return {
       opacity: interpolate(
         translateY.value,
-        [SCREEN_HEIGHT, SCREEN_HEIGHT - height],
+        [height, 0],
         [0, 1],
-        Extrapolate.CLAMP
+        Extrapolation.CLAMP
       ),
-      display: translateY.value === SCREEN_HEIGHT ? 'none' : 'flex',
     };
   });
 
-  if (!visible && translateY.value === SCREEN_HEIGHT) return null;
+  // Use a conditional rendering that allows the animation to play
+  const [shouldRender, setShouldRender] = React.useState(visible);
+
+  useEffect(() => {
+    if (visible) {
+      setShouldRender(true);
+    } else {
+      const timeout = setTimeout(() => setShouldRender(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [visible]);
+
+  if (!shouldRender && !visible) return null;
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents={visible ? 'auto' : 'none'}>

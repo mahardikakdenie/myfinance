@@ -103,9 +103,10 @@ export default function AddTransactionScreen() {
 							{ borderColor: theme.border },
 						]}
 						onPress={() => {
-							setType('expense');
-							setCategory('Food');
+						  setType('expense');
+						  setCategory('Makanan');
 						}}>
+
 						<ThemedText
 							style={[
 								type === 'expense' && {

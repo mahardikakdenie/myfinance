@@ -37,6 +37,10 @@ interface FinanceContextType {
   setUser: (user: UserProfile) => void;
   currency: string;
   setCurrency: (code: string) => void;
+  expectedIncome: number;
+  setExpectedIncome: (amount: number) => void;
+  savingsTarget: number;
+  setSavingsTarget: (amount: number) => void;
   resetData: () => void;
 }
 
@@ -59,6 +63,8 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
     email: 'john.doe@example.com',
   });
   const [currency, setCurrency] = useState('IDR');
+  const [expectedIncome, setExpectedIncome] = useState(10000000);
+  const [savingsTarget, setSavingsTarget] = useState(2000000);
   const [budgets, setBudgets] = useState<Record<string, number>>({
     'Makanan': 2000000,
     'Transportasi': 500000,
@@ -126,6 +132,8 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
   const resetData = () => {
     setTransactions([]);
     setBudgets({});
+    setExpectedIncome(0);
+    setSavingsTarget(0);
   };
 
   const totalIncome = transactions
@@ -154,6 +162,10 @@ export const FinanceProvider = ({ children }: { children: ReactNode }) => {
         setUser,
         currency,
         setCurrency,
+        expectedIncome,
+        setExpectedIncome,
+        savingsTarget,
+        setSavingsTarget,
         resetData,
       }}>
       {children}
