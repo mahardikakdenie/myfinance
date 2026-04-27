@@ -12,15 +12,17 @@ The command center of your financial life. It provides a real-time summary of yo
 - **Recent Transactions**: Quick view of your latest activities.
 - **Quick Action FAB**: Add transactions in seconds with auto-formatted currency inputs.
 
-![Home Screen](./assets/apps/home.png)
+<img src="./assets/apps/home.png" width="300" alt="Home Screen" />
 
 ### 2. Zero-Based Financial Planning
 Stop wondering where your money went and start telling it where to go.
 - **Budget Allocation**: Allocate your expected income into savings and various categories until your "Unallocated Funds" reach zero.
 - **Excel Mode (Power User)**: A unique rapid-input mode for users who prefer bulk entry. Toggle this mode to edit all category budgets inline without opening modals—just like a spreadsheet.
 
-![Financial Plan](./assets/apps/financial-plan.png)
-![Excel Mode](./assets/apps/financial-plan-excel-mode.png)
+<p align="left">
+  <img src="./assets/apps/financial-plan.png" width="300" alt="Financial Plan" />
+  <img src="./assets/apps/financial-plan-excel-mode.png" width="300" alt="Excel Mode" />
+</p>
 
 ### 3. Deep Analytics & Budget Health
 Visualize your spending habits with a modern, high-contrast UI.
@@ -28,7 +30,7 @@ Visualize your spending habits with a modern, high-contrast UI.
 - **Budget vs. Actual**: Real-time progress bars for each category. Bars turn **red** instantly if you exceed your planned budget.
 - **Category Details**: Detailed breakdown of spending with percentage usage.
 
-![Analytics Screen](./assets/apps/analytics.png)
+<img src="./assets/apps/analytics.png" width="300" alt="Analytics Screen" />
 
 ### 4. Premium UI/UX Components
 - **Custom Gesture BottomSheet**: A native-feel, drag-to-close modal system for all inputs (Date Picker, Budgeting, Profile).
@@ -41,7 +43,7 @@ Visualize your spending habits with a modern, high-contrast UI.
 - **Currency Toggle**: Switch between IDR (Rp) and USD ($).
 - **Data Governance**: Securely clear all data or export your records (Simulation).
 
-![Settings Screen](./assets/apps/settings.png)
+<img src="./assets/apps/settings.png" width="300" alt="Settings Screen" />
 
 ---
 
